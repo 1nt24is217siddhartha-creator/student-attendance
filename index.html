@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Student Attendance</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f2f4f8;--card:#fff;--ink:#1a2340;--mut:#5b6580;--line:#dde2ec;--pri:#23398f;--priInk:#fff;--P:#0f766e;--A:#c2410c;--L:#a16207;--Pbg:#d6f0ec;--Abg:#fbe3d8;--Lbg:#f7ebc4;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#10152a;--card:#1a2140;--ink:#eaeefb;--mut:#9aa4c4;--line:#2b3560;--pri:#8ea2ff;--priInk:#10152a;--P:#5eead4;--A:#fdba74;--L:#fde68a;--Pbg:#12433f;--Abg:#4a2512;--Lbg:#44380e}}
+:root[data-theme="dark"]{--bg:#10152a;--card:#1a2140;--ink:#eaeefb;--mut:#9aa4c4;--line:#2b3560;--pri:#8ea2ff;--priInk:#10152a;--P:#5eead4;--A:#fdba74;--L:#fde68a;--Pbg:#12433f;--Abg:#4a2512;--Lbg:#44380e}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 'Bricolage Grotesque',system-ui,-apple-system,'Segoe UI',sans-serif}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:3px solid var(--pri);outline-offset:2px}
+.wrap{max-width:980px;margin:0 auto;padding:16px}
+h1,h2,h3{margin:0;line-height:1.15}
+h1{font-size:2.2rem;font-weight:800}
+h2{font-size:1.5rem;font-weight:800;margin-bottom:12px}
+h3{font-size:1.05rem;font-weight:600}
+.mut{color:var(--mut)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px}
+.btn{background:var(--pri);color:var(--priInk);border:0;border-radius:8px;padding:9px 16px;font-weight:600}
+.btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+.btn.sm{padding:5px 10px;font-size:.9rem}
+input,select{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:9px 11px;width:100%}
+label{display:block;font-weight:600;font-size:.9rem;margin:12px 0 4px}
+/* login */
+.login{min-height:100vh;display:grid;place-items:center;padding:16px}
+.login .card{width:100%;max-width:400px;padding:28px}
+.err{color:var(--A);min-height:1.4em;margin:10px 0 0;font-size:.9rem}
+.hint{font-size:.85rem;color:var(--mut);margin-top:16px;border-top:1px solid var(--line);padding-top:12px}
+/* nav */
+header.top{background:var(--card);border-bottom:1px solid var(--line);position:sticky;top:env(safe-area-inset-top,0px);z-index:5}
+header.top .wrap{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding-top:10px;padding-bottom:10px}
+.brand{font-weight:800;font-size:1.15rem;margin-right:auto}
+nav{display:flex;gap:4px}
+nav button{background:none;border:0;padding:7px 12px;border-radius:8px;font-weight:600;color:var(--mut)}
+nav button.on{background:var(--pri);color:var(--priInk)}
+/* dashboard */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px;margin-bottom:16px}
+.stat{border-radius:10px;padding:14px}
+.stat b{display:block;font-size:2rem;font-weight:800;line-height:1}
+.stat.P{background:var(--Pbg);color:var(--P)}.stat.A{background:var(--Abg);color:var(--A)}.stat.L{background:var(--Lbg);color:var(--L)}.stat.T{background:var(--card);border:1px solid var(--line)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:700px){.grid2{grid-template-columns:1fr}h1{font-size:1.8rem}}
+.bar{display:flex;align-items:center;gap:10px;margin:10px 0}
+.bar span:first-child{width:52px;font-weight:600}
+.track{flex:1;height:12px;background:var(--line);border-radius:6px;overflow:hidden}
+.fill{height:100%;background:var(--P)}
+.fill.low{background:var(--A)}
+ul.plain{list-style:none;padding:0;margin:0}
+ul.plain li{display:flex;justify-content:space-between;gap:8px;padding:8px 0;border-bottom:1px solid var(--line)}
+ul.plain li:last-child{border:0}
+/* attendance + tables */
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:end;margin-bottom:14px}
+.row>div{flex:1;min-width:140px}
+.sheet .stu{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.sheet .stu:last-child{border:0}
+.stu .nm{flex:1;min-width:140px;font-weight:600}
+.seg{display:flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.seg button{background:none;border:0;padding:7px 14px;font-weight:600;color:var(--mut);border-right:1px solid var(--line)}
+.seg button:last-child{border:0}
+.seg button.P.on{background:var(--Pbg);color:var(--P)}
+.seg button.A.on{background:var(--Abg);color:var(--A)}
+.seg button.L.on{background:var(--Lbg);color:var(--L)}
+.tw{overflow-x:auto}
+table{width:100%;border-collapse:collapse}
+th,td{text-align:left;padding:9px 8px;border-bottom:1px solid var(--line)}
+th{font-size:.85rem;color:var(--mut)}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:8px;font-weight:600}
+.empty{padding:24px;text-align:center;color:var(--mut)}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+(function(){
+var KEY='student_attendance_v1',mem=null;
+function today(){var d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+function seed(){
+  var names={'8A':['Aarav Kumar','Divya Raman','Karthik Selvam','Meena Iyer'],'8B':['Nisha Patel','Rohan Das','Sana Fathima','Vikram Nair'],'9A':['Anjali Menon','Bala Murugan','Harini S','Imran Khan']};
+  var st=[],id=1;Object.keys(names).forEach(function(c){names[c].forEach(function(n){st.push({id:id++,name:n,cls:c})})});
+  var att={},d=new Date(),k=0,seedv=7;
+  function rnd(){seedv=(seedv*9301+49297)%233280;return seedv/233280}
+  while(k<6){d.setDate(d.getDate()-1);if(d.getDay()==0||d.getDay()==6)continue;k++;
+    var ds=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+    Object.keys(names).forEach(function(c){['Maths','Science','English'].forEach(function(sb){var r={};st.filter(function(s){return s.cls==c}).forEach(function(s){var x=rnd();r[s.id]=x<.72?'P':x<.85?'L':'A'});att[ds+'|'+c+'|'+sb]=r})})}
+  return {subjects:['Maths','Science','English'],users:[{u:'admin',p:'admin123',role:'Admin'},{u:'teacher',p:'teach123',role:'Teacher'}],students:st,att:att,next:id,session:null};
+}
+function load(){try{var r=localStorage.getItem(KEY);if(r)return JSON.parse(r)}catch(e){}return mem||seed()}
+function save(){mem=S;try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+var S=load();(function(){S.subjects=S.subjects||['Maths','Science','English'];Object.keys(S.att).forEach(function(k){if(k.split('|').length<3){S.att[k+'|General']=S.att[k];delete S.att[k]}});Object.keys(S.att).forEach(function(k){var sb=k.split('|')[2];if(S.subjects.indexOf(sb)<0)S.subjects.push(sb)})})();S.students.forEach(function(s){if(!S.users.some(function(x){return x.sid==s.id}))S.users.push({u:'s'+s.id,p:'student123',role:'Student',sid:s.id})});save();var view='dashboard',selSub='',fsub='',selCls='',selDate=today(),draft={},toastMsg='';
+var $=function(id){return document.getElementById(id)};
+function esc(t){return String(t).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+function classes(){var o=[];S.students.forEach(function(s){if(o.indexOf(s.cls)<0)o.push(s.cls)});return o.sort()}
+function toast(m){toastMsg=m;render();setTimeout(function(){toastMsg='';render()},3500)}
+
+/* ---- backend-style modules (users / students / attendance) ---- */
+var Users={login:function(u,p){return S.users.find(function(x){return x.u==u.trim().toLowerCase()&&x.p==p})},register:function(u,p){if(u.length<3)return 'Username needs at least 3 characters.';if(p.length<6)return 'Password needs at least 6 characters.';if(S.users.some(function(x){return x.u==u}))return 'That username is taken.';S.users.push({u:u,p:p,role:'Teacher'});save();return ''}};
+var Students={add:function(n,c){var id=S.next++;S.students.push({id:id,name:n.trim(),cls:c.trim().toUpperCase()});S.users.push({u:'s'+id,p:'student123',role:'Student',sid:id});save();return 's'+id},
+  remove:function(id){S.students=S.students.filter(function(s){return s.id!=id});S.users=S.users.filter(function(x){return x.sid!=id});Object.keys(S.att).forEach(function(k){delete S.att[k][id]});save()},
+  inClass:function(c){return S.students.filter(function(s){return s.cls==c})}};
+function canMark(){return S.session&&S.session.role!='Student'}
+var Attendance={get:function(d,c,s){return S.att[d+'|'+c+'|'+s]||null},set:function(d,c,s,r){S.att[d+'|'+c+'|'+s]=r;save()},
+  pct:function(id,sb){var p=0,t=0;Object.keys(S.att).forEach(function(k){if(sb&&k.split('|')[2]!=sb)return;var v=S.att[k][id];if(v){t++;if(v!='A')p++}});return t?Math.round(p/t*100):null},
+  classPct:function(c){var p=0,t=0;Students.inClass(c).forEach(function(s){Object.keys(S.att).forEach(function(k){var v=S.att[k][s.id];if(v){t++;if(v!='A')p++}})});return t?Math.round(p/t*100):0}};
+
+/* ---- views ---- */
+var signup=false;function loginView(){return '<div class="login"><div class="card"><h1>Student Attendance</h1><p class="mut">'+(signup?'Create a teacher account.':'Sign in to mark and review attendance.')+'</p>'+
+ '<label for="u">Username</label><input id="u" autocomplete="username"><label for="p">Password</label><input id="p" type="password" autocomplete="current-password"><label style="font-weight:400;display:flex;gap:8px;align-items:center"><input type="checkbox" style="width:auto" onchange="App.show(this.checked)"> Show password</label>'+
+ '<p class="err" id="err" role="alert"></p><button class="btn" style="width:100%" onclick="App.login()">'+(signup?'Create account':'Sign in')+'</button>'+
+ '<p class="hint">Demo logins (tap to fill):</p><div class="row" style="margin:8px 0 0"><div><button class="btn ghost sm" style="width:100%" onclick="App.fill(\'admin\',\'admin123\')">Admin</button></div><div><button class="btn ghost sm" style="width:100%" onclick="App.fill(\'teacher\',\'teach123\')">Teacher</button></div><div><button class="btn ghost sm" style="width:100%" onclick="App.fill(\'s1\',\'student123\')">Student</button></div></div><p class="mut" style="font-size:.85rem;margin:8px 0">admin / admin123 &middot; teacher / teach123 &middot; student s1 / student123</p></div></div>'}
+
+function dashView(){
+  var t=today(),c={P:0,A:0,L:0};
+  Object.keys(S.att).forEach(function(k){if(k.split('|')[0]!=t)return;var r=S.att[k];Object.keys(r).forEach(function(i){if(c[r[i]]!==undefined)c[r[i]]++})});
+  var marked=c.P+c.A+c.L,low=[];S.students.forEach(function(s){S.subjects.forEach(function(sb){var p=Attendance.pct(s.id,sb);if(p!==null&&p<75)low.push({s:s,sb:sb,p:p})})});low.sort(function(a,b){return a.p-b.p});
+  return '<h2>Dashboard</h2><div class="stats"><div class="stat T"><b>'+S.students.length+'</b>Students</div>'+
+   '<div class="stat P"><b>'+c.P+'</b>Present today</div><div class="stat A"><b>'+c.A+'</b>Absent today</div><div class="stat L"><b>'+c.L+'</b>Late today</div></div>'+
+   (marked?'':'<p class="mut">Nobody has been marked for today yet. Open Attendance to start.</p>')+
+   '<div class="grid2"><div class="card"><h3>Attendance by class</h3>'+classes().map(function(cl){var p=Attendance.classPct(cl);return '<div class="bar"><span>'+esc(cl)+'</span><div class="track"><div class="fill'+(p<75?' low':'')+'" style="width:'+p+'%"></div></div><span>'+p+'%</span></div>'}).join('')+'</div>'+
+   '<div class="card"><h3>Below 75% attendance</h3>'+(low.length?'<ul class="plain">'+low.map(function(x){return '<li><span>'+esc(x.s.name)+' <span class="mut">('+esc(x.s.cls)+' &middot; '+esc(x.sb)+')</span></span><b style="color:var(--A)">'+x.p+'%</b></li>'}).join('')+'</ul>':'<div class="empty">Every student is at 75% or above.</div>')+'</div></div><div class="card" style="margin-top:16px"><h3>Attendance by subject</h3>'+S.subjects.map(function(sb){var p=0,t=0;Object.keys(S.att).forEach(function(k){if(k.split('|')[2]!=sb)return;var r=S.att[k];Object.keys(r).forEach(function(i){t++;if(r[i]!='A')p++})});var q=t?Math.round(p/t*100):0;return '<div class="bar"><span style="width:80px">'+esc(sb)+'</span><div class="track"><div class="fill'+(q<75?' low':'')+'" style="width:'+q+'%"></div></div><span>'+(t?q+'%':'-')+'</span></div>'}).join('')+'</div>'}
+
+function attView(){
+  var cl=classes();if(!selCls)selCls=cl[0]||'';if(!selSub)selSub=S.subjects[0]||'';
+  var list=Students.inClass(selCls),saved=Attendance.get(selDate,selCls,selSub);
+  if(!draft.key||draft.key!=selDate+'|'+selCls+'|'+selSub){draft={key:selDate+'|'+selCls+'|'+selSub,r:Object.assign({},saved||{})}}
+  var n=list.filter(function(s){return draft.r[s.id]}).length;
+  return '<h2>Attendance</h2><div class="card"><div class="row"><div><label for="cs">Class</label><select id="cs" onchange="App.cls(this.value)">'+cl.map(function(c){return '<option'+(c==selCls?' selected':'')+'>'+esc(c)+'</option>'}).join('')+'</select></div>'+
+   '<div><label for="sb">Subject</label><select id="sb" onchange="App.sub(this.value)">'+S.subjects.map(function(x){return '<option'+(x==selSub?' selected':'')+'>'+esc(x)+'</option>'}).join('')+'</select></div><div><label for="dt">Date</label><input id="dt" type="date" value="'+selDate+'" max="'+today()+'" onchange="App.date(this.value)"></div>'+
+   '<div style="flex:0"><button class="btn ghost" onclick="App.allP()">Mark all present</button></div></div>'+
+   (list.length?'<div class="sheet">'+list.map(function(s){var v=draft.r[s.id];return '<div class="stu"><span class="nm">'+esc(s.name)+'</span><div class="seg" role="group" aria-label="'+esc(s.name)+'">'+
+     ['P','A','L'].map(function(k){return '<button class="'+k+(v==k?' on':'')+'" aria-pressed="'+(v==k)+'" onclick="App.mark('+s.id+',\''+k+'\',this)">'+{P:'Present',A:'Absent',L:'Late'}[k]+'</button>'}).join('')+'</div></div>'}).join('')+'</div>'+
+     '<div class="row" style="margin:16px 0 0"><div class="mut" id="cnt" style="align-self:center">'+n+' of '+list.length+' marked'+(saved?' · saved earlier':'')+'</div><div style="flex:0"><button class="btn" onclick="App.saveAtt()">Save attendance</button></div></div>':'<div class="empty">This class has no students yet. Add some under Students.</div>')+'</div>'}
+
+function stuView(){
+  var admin=S.session.role=='Admin';
+  return '<h2>Students</h2><div class="card" style="margin-bottom:16px"><h3>Add a student</h3><div class="row" style="margin:0"><div><label for="nn">Full name</label><input id="nn"></div><div><label for="nc">Class (e.g. 8A)</label><input id="nc" maxlength="6"></div><div style="flex:0"><button class="btn" onclick="App.addStu()">Add student</button></div></div></div>'+(admin?'<div class="card" style="margin-bottom:16px"><h3>Add a teacher login</h3><div class="row" style="margin:0"><div><label for="tu">Username</label><input id="tu"></div><div><label for="tp">Password</label><input id="tp" type="password"></div><div style="flex:0"><button class="btn" onclick="App.addTch()">Add teacher</button></div></div></div><div class="card" style="margin-bottom:16px"><h3>Add a subject</h3><div class="row" style="margin:0"><div><label for="ns">Subject name</label><input id="ns" maxlength="30"></div><div style="flex:0"><button class="btn" onclick="App.addSub()">Add subject</button></div></div></div>':'')+
+  '<div class="card tw"><table><thead><tr><th>Name</th><th>Class</th>'+S.subjects.map(function(x){return '<th>'+esc(x)+'</th>'}).join('')+'<th>Overall</th>'+(admin?'<th>Login</th><th></th>':'')+'</tr></thead><tbody>'+
+  (S.students.length?S.students.slice().sort(function(a,b){return a.cls.localeCompare(b.cls)||a.name.localeCompare(b.name)}).map(function(s){var cell=function(p){return '<td'+(p!==null&&p<75?' style="color:var(--A);font-weight:600"':'')+'>'+(p===null?'-':p+'%')+'</td>'};return '<tr><td>'+esc(s.name)+'</td><td>'+esc(s.cls)+'</td>'+S.subjects.map(function(x){return cell(Attendance.pct(s.id,x))}).join('')+cell(Attendance.pct(s.id))+(admin?'<td>s'+s.id+'</td><td><button class="btn ghost sm" onclick="App.del('+s.id+')">Remove</button></td>':'')+'</tr>'}).join(''):'<tr><td colspan="8" class="empty">No students yet.</td></tr>')+'</tbody></table></div>'}
+
+function myView(){var s=S.students.find(function(x){return x.id==S.session.sid});if(!s)return '<div class="empty">No student record is linked to this login.</div>';
+  var rec=[];Object.keys(S.att).forEach(function(k){var v=S.att[k][s.id];if(v)rec.push({d:k.split('|')[0],sb:k.split('|')[2],v:v})});rec.sort(function(a,b){return b.d.localeCompare(a.d)});
+  var c={P:0,A:0,L:0},W={P:'Present',A:'Absent',L:'Late'};rec.forEach(function(r){c[r.v]++});var p=Attendance.pct(s.id);
+  return '<h2>My attendance</h2><p class="mut">'+esc(s.name)+' &middot; Class '+esc(s.cls)+'</p><div class="stats"><div class="stat T"><b>'+(p===null?'-':p+'%')+'</b>Overall</div><div class="stat P"><b>'+c.P+'</b>Present</div><div class="stat L"><b>'+c.L+'</b>Late</div><div class="stat A"><b>'+c.A+'</b>Absent</div></div>'+(p!==null&&p<75?'<p style="color:var(--A);font-weight:600">Your attendance is below 75%. Please speak to your teacher.</p>':'')+'<div class="card" style="margin-bottom:16px"><h3>By subject</h3>'+S.subjects.map(function(sb){var q=Attendance.pct(s.id,sb);return q===null?'':'<div class="bar"><span style="width:80px">'+esc(sb)+'</span><div class="track"><div class="fill'+(q<75?' low':'')+'" style="width:'+q+'%"></div></div><span>'+q+'%</span></div>'}).join('')+'</div><div class="card tw"><table><thead><tr><th>Date</th><th>Subject</th><th>Status</th></tr></thead><tbody>'+(rec.length?rec.map(function(r){return '<tr><td>'+r.d+'</td><td>'+esc(r.sb)+'</td><td style="color:var(--'+r.v+');font-weight:600">'+W[r.v]+'</td></tr>'}).join(''):'<tr><td colspan="3" class="empty">No attendance has been marked for you yet.</td></tr>')+'</tbody></table></div>'}
+
+function render(){
+  var a=$('app');
+  if(!S.session){a.innerHTML=loginView();return}
+  var stu=S.session.role=='Student',tabs=stu?['my attendance']:['dashboard','attendance','students'];if(stu)view='my attendance';else if(view=='my attendance')view='dashboard';var body=stu?myView():view=='dashboard'?dashView():view=='attendance'?attView():stuView();
+  a.innerHTML='<header class="top"><div class="wrap"><span class="brand">Student Attendance</span><nav>'+
+   tabs.map(function(v){return '<button class="'+(v==view?'on':'')+'" onclick="App.go(\''+v+'\')">'+v[0].toUpperCase()+v.slice(1)+'</button>'}).join('')+
+   '</nav><button class="btn ghost sm" onclick="App.out()">Sign out ('+esc(S.session.u)+')</button></div></header><main class="wrap">'+body+'</main>'+(toastMsg?'<div class="toast" role="status">'+esc(toastMsg)+'</div>':'');
+}
+
+window.App={
+  login:function(){var n=$('u').value.trim().toLowerCase(),p=$('p').value,e=$('err');if(!n||!p){e.textContent='Enter your username and password.';return}if(signup){var m=Users.register(n,p);if(m){e.textContent=m;return}}var u=Users.login(n,p);if(!u){e.textContent='Username or password is incorrect. Tap Admin or Teacher below to fill a demo login.';return}S.session={u:u.u,role:u.role,sid:u.sid};signup=false;save();view='dashboard';render()},
+  mode:function(){signup=!signup;render()},
+  fill:function(u,p){signup=false;render();$('u').value=u;$('p').value=p;$('p').focus()},
+  show:function(on){$('p').type=on?'text':'password'},
+  sub:function(v){selSub=v;draft={};render()},
+  fsub:function(v){fsub=v;render()},
+  addSub:function(){if(S.session.role!='Admin')return;var n=$('ns').value.trim();if(!n){toast('Enter a subject name');return}if(S.subjects.some(function(x){return x.toLowerCase()==n.toLowerCase()})){toast('That subject already exists');return}S.subjects.push(n);save();toast(n+' added')},
+  addTch:function(){if(S.session.role!='Admin')return;var m=Users.register($('tu').value.trim().toLowerCase(),$('tp').value);toast(m||'Teacher login created')},
+  out:function(){S.session=null;save();render()},
+  go:function(v){view=v;render()},
+  cls:function(v){selCls=v;draft={};render()},
+  date:function(v){if(v){selDate=v;draft={};render()}},
+  mark:function(id,k,b){if(!canMark())return;draft.r[id]=k;Array.prototype.forEach.call(b.parentNode.children,function(x){var on=x==b;x.classList.toggle('on',on);x.setAttribute('aria-pressed',on)});var l=Students.inClass(selCls);$('cnt').textContent=l.filter(function(s){return draft.r[s.id]}).length+' of '+l.length+' marked'+(Attendance.get(selDate,selCls,selSub)?' · saved earlier':'')},
+  allP:function(){if(!canMark())return;Students.inClass(selCls).forEach(function(s){draft.r[s.id]='P'});render()},
+  saveAtt:function(){if(!canMark())return;var l=Students.inClass(selCls);if(l.some(function(s){return !draft.r[s.id]})){toast('Mark every student before saving');return}Attendance.set(selDate,selCls,selSub,Object.assign({},draft.r));toast(selSub+' attendance saved for '+selCls)},
+  addStu:function(){if(!canMark())return;var n=$('nn').value,c=$('nc').value;if(!n.trim()||!c.trim()){toast('Enter a name and a class');return}var lg=Students.add(n,c);toast('Student added. Login: '+lg+' / student123')},
+  del:function(id){if(S.session.role!='Admin')return;if(confirm('Remove this student and their attendance records?')){Students.remove(id);toast('Student removed')}}
+};
+document.addEventListener('keydown',function(e){if(e.key=='Enter'&&!S.session&&$('p'))App.login()});
+render();
+})();
+</script>
+</body>
+</html>
